@@ -1,0 +1,27 @@
+name: proyecto_vivienda_carabineros
+services:
+  mysql:
+    container_name: mysql
+    image: mysql:8
+    env_file: ./.env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$DB_ROOT_PASS
+      - MYSQL_DATABASE=$DB_NAME
+    ports:
+      - $DB_LOCAL_PORT:$DB_DOCKER_PORT
+    volumes:
+      - ./database:/var/lib/mysql
+
+  server:
+    container_name: server
+    build: server/.
+    restart: on-failure
+    env_file: ./.env
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    ports:
+      - 4000:4000
+    volumes:
+      - .:/server
